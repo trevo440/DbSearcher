@@ -1,6 +1,4 @@
 # DbSearcher
-Database Searching Class
-
 DbSearcher - The class for searching Through Databases
         
         Search Types:
