@@ -368,13 +368,15 @@ class DbSearcher():
             
         #if meta info        
         if sqlStringList:
+            valueList = []
             self.__progressVar = 0
             totalCount = len(sqlStringList)
             for item in sqlStringList: #limit for testing
                 self.__progressVar += 1
                 #config settings for searching by value
                 if self.config['search_type'] == 'Search':
-                    valueList=['Table', 'Column', 'Type', 'Display Size', 'Internal Size', 'SQL', 'Output Sample']
+                    if not valueList:
+                        valueList=['Table', 'Column', 'Type', 'Display Size', 'Internal Size', 'SQL', 'Output Sample']
                     self.display_info_msg(f'Executing Search-Query ({self.__progressVar}/{totalCount}) | {int((self.__progressVar/totalCount) * 100)}%')
                     try:
                         self.__cursor.execute(item[0])
@@ -388,11 +390,13 @@ class DbSearcher():
                          
                 #config settings for schema        
                 if self.config['search_type'] == 'Column':
-                    valueList=['Table', 'Column', 'Type', 'Display Size', 'Internal Size']
+                    if not valueList:
+                        valueList=['Table', 'Column', 'Type', 'Display Size', 'Internal Size']
                     self.__data_array.append([str(item[1]), str(item[2]), str(item[3]), str(item[4]), str(item[5])]) #CHANGE TO DF OUTPUT
                     
                 if self.config['search_type'] == 'MST':
-                    valueList=['Table', 'Column', 'Type', 'Value', 'Count']
+                    if not valueList:
+                        valueList=['Table', 'Column', 'Type', 'Value', 'Count']
                     self.display_info_msg(f'Executing Distinct Value Fetch | ({self.__progressVar}/{totalCount}) | {int((self.__progressVar/totalCount) * 100)}%')
                     try:
                         self.__cursor.execute(item[0])
