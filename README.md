@@ -2,13 +2,17 @@
 Database Searching Class
 
 DbSearcher - The class for searching Through Databases
-        Search Types: ->Table (info on a table level- row counts, table types, etc.)
-                      ->Column (info on a column level- data types, column size, etc.)
-                      ->Search (Search for a value inside of the database)
-                      ->MST (creates a massive table composed of all distinct values of all columns in the database...
-                             Searching on this table is significantly faster)
+        
+        Search Types:
+        
+                ->Table (info on a table level- row counts, table types, etc.)
+                ->Column (info on a column level- data types, column size, etc.)
+                ->Search (Search for a value inside of the database)
+                ->MST (creates a massive table composed of all distinct values of all columns in the database...
+                       Searching on this table is significantly faster)
                              
-Possible inputs
+Possible inputs:
+
         Connection Info:
             conn_string (required) - ODBC connection string, uses pyodbc library for connection
             conn_type (default SQL, or use OTH) - for ensuring sql queries will work against the data source
