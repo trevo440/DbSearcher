@@ -29,7 +29,7 @@ class DbSearcher():
         '''
         Possible inputs
             conn_string (required) - ODBC connection string, uses pyodbc library for connection
-            conn_type (default SQL) - for ensuring sql queries will work againstt the data source
+            conn_type (requied) - for ensuring sql queries will work against the data source (SQL, OTH)
             db_name  (required) - The name of the Database (dbo, etc. for SQLServer)
             search_type (required) - Table, Column, Search, MST (4 options, default: None)
             max_row_count (default None) - only applies to Search or MST
@@ -239,9 +239,9 @@ class DbSearcher():
         try:
             for table in self.__cursor.tables(schema=f'%{self.__db_name}%'):
                 self.__internal_table_list.append(table.table_name)
-                if self.__search_type == 'Table':
+                if self.config['search_type'] == 'Table':
                     self.__internal_table_data.append([table.table_name, table.table_schem, table.table_cat, table.table_type])
-                if self.__and_column is not None and self.__like_val is not None:
+                if self.config['and_column'] is not None and self.config['like_val'] is not None:
                     self.__internal_reference[table.table_name] = []
             #self.display_info_msg(f'Table found: {table.table_name}')
             self.display_text_msg(f'Num Tables: {len(self.__internal_table_list)}')
@@ -277,7 +277,7 @@ class DbSearcher():
         '''
         self.__parseValue = 0
         if self.config['max_row_count'] is not None:
-            if self.config['search_type'] == 'MST' or self.config['search_type'] == 'Data':
+            if self.config['search_type'] == 'MST' or self.config['search_type'] == 'Search':
                 for table_info in self.__internal_table_list:
                     self.__parseValue += 1
                     self.display_info_msg(f'Parsing Table {self.__parseValue}/{self.__tableCount} for Row Count | ({table_info})')
@@ -309,7 +309,7 @@ class DbSearcher():
             
             try:
                 #"point" to specific table for gathering information
-                if self.ServerFieldName == 'SQL':
+                if self.config['search_type'] == 'SQL':
                     tableSqlString = f'SELECT TOP 1 * FROM "{self.config["db_name"]}"."{table}"'
                 else:
                     tableSqlString = f'SELECT * FROM "{self.config["db_name"]}"."{table}" LIMIT 1'
@@ -344,7 +344,7 @@ class DbSearcher():
                     #add sqlString to execute in main run
                     if sortSignal == 0 and self.__search_type != 'MST':
                         #construct SQL statement
-                        if self.ServerFieldName == 'SQL':
+                        if self.config['conn_type'] == 'SQL':
                             if self.__internal_reference:
                                 sqlString = f'SELECT TOP 1 * FROM {self.config["db_name"]}.{table} WHERE UPPER([{self.config["db_name"]}].[{table}].[{row[0]}]) ' + f"LIKE UPPER('{self.config['search_val']}')" + f"AND [{self.config['db_name']}].[{table}].[{self.config['and_column']}] LIKE '{self.config['like_val']}'"
                             else:
@@ -357,7 +357,7 @@ class DbSearcher():
                         self.sqlStringList.append([sqlString, table, row[0], row[1], row[2], row[3]])        
                     
                     if sortSignal == 0 and self.__search_type == 'MST':
-                        if self.ServerFieldName == 'SQL':
+                        if self.config['conn_type'] == 'SQL':
                             sqlString = f'SELECT [{self.config["db_name"]}].[{table}].[{row[0]}], COUNT([{self.config["db_name"]}].[{table}].[{row[0]}]) FROM [{self.config["db_name"]}].[{table}] GROUP BY [{self.config["db_name"]}].[{table}].[{row[0]}]'            
                         else:
                             sqlString = f'SELECT {self.config["db_name"]}.{table}.{row[0]}, COUNT({self.config["db_name"]}.{table}.{row[0]}) FROM {self.config["db_name"]}.{table} GROUP BY {self.config["db_name"]}.{table}.{row[0]}'       
@@ -373,7 +373,7 @@ class DbSearcher():
             for item in sqlStringList: #limit for testing
                 self.__progressVar += 1
                 #config settings for searching by value
-                if self.__search_type == 'Search':
+                if self.config['search_type'] == 'Search':
                     valueList=['Table', 'Column', 'Type', 'Display Size', 'Internal Size', 'SQL', 'Output Sample']
                     self.display_info_msg(f'Executing Search-Query ({self.__progressVar}/{totalCount}) | {int((self.__progressVar/totalCount) * 100)}%')
                     try:
@@ -387,11 +387,11 @@ class DbSearcher():
                         pass  
                          
                 #config settings for schema        
-                if self.__search_type == 'Column':
+                if self.config['search_type'] == 'Column':
                     valueList=['Table', 'Column', 'Type', 'Display Size', 'Internal Size']
                     self.__data_array.append([str(item[1]), str(item[2]), str(item[3]), str(item[4]), str(item[5])]) #CHANGE TO DF OUTPUT
                     
-                if self.__search_type == 'MST':
+                if self.config['search_type'] == 'MST':
                     valueList=['Table', 'Column', 'Type', 'Value', 'Count']
                     self.display_info_msg(f'Executing Distinct Value Fetch | ({self.__progressVar}/{totalCount}) | {int((self.__progressVar/totalCount) * 100)}%')
                     try:
