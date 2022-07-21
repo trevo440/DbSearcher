@@ -13,7 +13,7 @@ Possible inputs:
 
         Connection Info:
             conn_string (required) - ODBC connection string, uses pyodbc library for connection
-            conn_type (default SQL, or use OTH) - for ensuring sql queries will work against the data source
+            conn_type (required) - for ensuring sql queries will work against the data source (SQL, OTH)
             db_name  (required) - The name of the Database (dbo, etc. for SQLServer)
             
         Setup:
