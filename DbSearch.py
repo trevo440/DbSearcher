@@ -342,7 +342,7 @@ class DbSearcher():
                                 sortSignal += 1
                     
                     #add sqlString to execute in main run
-                    if sortSignal == 0 and self.__search_type != 'MST':
+                    if sortSignal == 0 and self.config['search_type'] != 'MST':
                         #construct SQL statement
                         if self.config['conn_type'] == 'SQL':
                             if self.__internal_reference:
@@ -356,7 +356,7 @@ class DbSearcher():
                                 sqlString = f'SELECT * FROM {self.config["db_name"]}.{table} WHERE UPPER({self.config["db_name"]}.{table}.{row[0]}) ' + f"LIKE UPPER('{self.config['search_val']}') LIMIT 1"
                         self.sqlStringList.append([sqlString, table, row[0], row[1], row[2], row[3]])        
                     
-                    if sortSignal == 0 and self.__search_type == 'MST':
+                    if sortSignal == 0 and self.config['search_type'] == 'MST':
                         if self.config['conn_type'] == 'SQL':
                             sqlString = f'SELECT [{self.config["db_name"]}].[{table}].[{row[0]}], COUNT([{self.config["db_name"]}].[{table}].[{row[0]}]) FROM [{self.config["db_name"]}].[{table}] GROUP BY [{self.config["db_name"]}].[{table}].[{row[0]}]'            
                         else:
@@ -443,8 +443,8 @@ class DbSearcher():
             else:
                 self.__row_Count()
                 self.__sub_run()
-        
-        return self.__df_out
+                
+            return self.__df_out
     
     #-------------------------------------------------------------------------------------------------------------------
     #Output Logs
