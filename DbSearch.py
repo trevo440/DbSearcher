@@ -193,25 +193,25 @@ class DbSearcher():
                 return ['Error', 'Column List Must be a List']
         
         #search_val
-        if self.config['search_type'] == 'Search':
-            if not self.config['search_val']:
-                return ['Error', 'Search Value must not be empty for this Search Type']
-            if not isinstance(self.config['search_val'], str):
-                return ['Error', 'Search Value must be a String']
+#         if self.config['search_type'] == 'Search':
+#             if not self.config['search_val']:
+#                 return ['Error', 'Search Value must not be empty for this Search Type']
+#             if not isinstance(self.config['search_val'], str):
+#                 return ['Error', 'Search Value must be a String']
             
-            #and_column
-            if self.config['and_column']:
-                if not isinstance(['and_column'], str):
-                    return ['Error', 'And Column must be a String']
-                if not self.config['like_val']:
-                    return ['Error', 'Both And Column AND Like Value are required (or both None)']
+#             #and_column
+#             if self.config['and_column']:
+#                 if not isinstance(['and_column'], str):
+#                     return ['Error', 'And Column must be a String']
+#                 if not self.config['like_val']:
+#                     return ['Error', 'Both And Column AND Like Value are required (or both None)']
             
-            #like_val
-            if self.config['like_val']:
-                if not isinstance(self.config['like_val'], str):
-                    return ['Error', 'Like Val must be a String']
-                if self.config['and_column']:
-                    return ['Error', 'Both And Column AND Like Value are required (or both None)']    
+#             #like_val
+#             if self.config['like_val']:
+#                 if not isinstance(self.config['like_val'], str):
+#                     return ['Error', 'Like Val must be a String']
+#                 if self.config['and_column']:
+#                     return ['Error', 'Both And Column AND Like Value are required (or both None)']    
         
         #Internal Validation = PASS
         else:
@@ -309,7 +309,7 @@ class DbSearcher():
             
             try:
                 #"point" to specific table for gathering information
-                if self.config['search_type'] == 'SQL':
+                if self.config['conn_type'] == 'SQL':
                     tableSqlString = f'SELECT TOP 1 * FROM "{self.config["db_name"]}"."{table}"'
                 else:
                     tableSqlString = f'SELECT * FROM "{self.config["db_name"]}"."{table}" LIMIT 1'
@@ -354,7 +354,7 @@ class DbSearcher():
                                 sqlString = f'SELECT * FROM {self.config["db_name"]}.{table} WHERE UPPER({self.config["db_name"]}.{table}.{row[0]}) ' + f"LIKE UPPER('{self.config['search_val']}')" + f"AND {self.config['db_name']}.{table}.{self.config['and_column']} LIKE '{self.config['like_val']}' LIMIT 1"
                             else:
                                 sqlString = f'SELECT * FROM {self.config["db_name"]}.{table} WHERE UPPER({self.config["db_name"]}.{table}.{row[0]}) ' + f"LIKE UPPER('{self.config['search_val']}') LIMIT 1"
-                        self.sqlStringList.append([sqlString, table, row[0], row[1], row[2], row[3]])        
+                        sqlStringList.append([sqlString, table, row[0], row[1], row[2], row[3]])        
                     
                     if sortSignal == 0 and self.config['search_type'] == 'MST':
                         if self.config['conn_type'] == 'SQL':
